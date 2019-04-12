@@ -2,6 +2,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
   entry: './examples/index.js',
@@ -12,10 +13,26 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['.js', '.json']
+    extensions: ['.vue', '.js', '.json']
   },
   module: {
     rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
+      {
+        test: /\.md$/,
+        use: [
+          'vue-loader',
+          {
+            loader: path.resolve(__dirname, 'dist/index.js'),
+            options: {
+              msg: 'Man'
+            }
+          }
+        ]
+      },
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
@@ -35,18 +52,16 @@ module.exports = {
         NODE_ENV: process.env.NODE_ENV || '"development"'
       }
     }),
-    // new webpack.HotModuleReplacementPlugin(),
-    // new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
-    // new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.html'
-    })
+    }),
+    new VueLoaderPlugin()
   ],
   devServer: {
     clientLogLevel: 'warning',
     contentBase: false,
     port: 8081,
-    open: true,
+    open: false,
     publicPath: '/',
     hot: true,
     inline: true

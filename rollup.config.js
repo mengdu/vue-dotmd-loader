@@ -13,24 +13,14 @@ const banner =
   ' * Created at ' + new Date() + '\n' +
   ' */'
 
-const isProduction = process.env.NODE_ENV === 'production'
+// const isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = {
   input: 'src/index.js',
   output: [
-    {
-      // window.$m
-      name: '$myapp',
-      file: isProduction ? 'dist/bundle.min.js' : 'dist/bundle.js',
-      format: 'umd',
-      // banner: banner,
-      sourcemap: false
-    }
-    // { file: 'dist/bundle.cjs.js', format: 'cjs' },
-    // { file: 'dist/bundle.esm.js', format: 'esm' },
-    // { file: 'dist/bundle.amd.js', format: 'amd' },
-    // { file: 'dist/bundle.iife.js', format: 'iife', name: '$m' }
+    { file: 'dist/index.js', format: 'cjs' }
   ],
+  external: ['loader-utils'],
   plugins: [
     Eslint.eslint({
       exclude: ['node_modules/**']
@@ -40,7 +30,7 @@ module.exports = {
     babel({
       exclude: 'node_modules/**'
     }),
-    (isProduction && Uglify.uglify()),
+    // (isProduction && Uglify.uglify()),
     {
       name: 'banner',
       renderChunk (code) {
