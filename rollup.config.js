@@ -2,7 +2,7 @@ const resolve = require('rollup-plugin-node-resolve')
 const commonjs = require('rollup-plugin-commonjs')
 const Eslint = require('rollup-plugin-eslint')
 const babel = require('rollup-plugin-babel')
-const Uglify = require('rollup-plugin-uglify')
+// const Uglify = require('rollup-plugin-uglify')
 const pkg = require('./package.json')
 
 const banner =
@@ -18,7 +18,7 @@ const banner =
 module.exports = {
   input: 'src/index.js',
   output: [
-    { file: 'dist/index.js', format: 'cjs' }
+    { file: 'lib/index.js', format: 'cjs' }
   ],
   external: ['loader-utils'],
   plugins: [

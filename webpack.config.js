@@ -26,9 +26,9 @@ module.exports = {
         use: [
           'vue-loader',
           {
-            loader: path.resolve(__dirname, 'dist/index.js'),
+            loader: path.resolve(__dirname, 'lib/index.js'),
             options: {
-              msg: 'Man'
+              msg: 'Hi'
             }
           }
         ]
@@ -43,6 +43,13 @@ module.exports = {
             plugins: ['@babel/plugin-transform-runtime']
           }
         }
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
+        ]
       }
     ]
   },
