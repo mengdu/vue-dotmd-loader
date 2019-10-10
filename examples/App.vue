@@ -1,18 +1,25 @@
 <template>
   <div>
     <!-- <test /> -->
+    <!-- <docs />
+    <test /> -->
+    <button-demo />
     <docs />
-    <test />
   </div>
 </template>
 <script>
 import Docs from './docs.md'
-import Test from '!vue-loader?vue-loader-options!./docs.md'
+// import Test from '!vue-loader?vue-loader-options!./docs.md'
+import ButtonDemo from './demos/button-demo'
 
-console.log(Docs, Test)
+console.log(1, Docs)
 
 export default {
-  components: { Docs, Test },
+  components: {
+    // Docs, Test,
+    Docs,
+    ButtonDemo
+  },
   data () {
     return {}
   }
