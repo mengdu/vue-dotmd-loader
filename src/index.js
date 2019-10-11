@@ -1,21 +1,9 @@
-// import { getOptions } from 'loader-utils'
+import { getOptions } from 'loader-utils'
 import crypto from 'crypto'
-
-function getDependencies (code) {
-  const imports = code.match(/<!-- +\[demo\]:.+ +-->/g)
-  if (!imports) return []
-
-  return imports.map(e => {
-    const data = e.match(/:(.+) +-->/)
-    const file = data[1].split('?')
-
-    return {
-      raw: e,
-      file: file[0],
-      params: file[1]
-    }
-  })
-}
+import path from 'path'
+import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js'
+import querystring from 'querystring'
 
 function md5 (str) {
   const hash = crypto.createHash('md5')
@@ -23,32 +11,166 @@ function md5 (str) {
   return hash.digest('hex')
 }
 
-export default function loader (source) {
-  // const options = getOptions(this)
-  // console.log(1, options, source)
-  const dependencies = getDependencies(source)
-  const imports = []
-  const components = []
-  for (let i = 0; i < dependencies.length; i++) {
-    const item = dependencies[i]
-    const componentName = `VueDemo${md5(item.raw).slice(0, 11)}`
+const HTML_REPLACEMENTS = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;'
+}
 
-    components.push(componentName)
-    imports.push(`import ${componentName} from '${item.file}'`)
-    console.log(1, item.raw)
-    source = source.replace(item.raw, `<${componentName} />`)
+function escapeHtml (str) {
+  if (/[&<>"]/.test(str)) {
+    return str.replace(/[&<>"]/g, (ch) => HTML_REPLACEMENTS[ch])
+  }
+  return str
+}
+
+function highlight (code, lang) {
+  let html = ''
+  if (lang && hljs.getLanguage(lang)) {
+    try {
+      html = hljs.highlight(lang, code).value
+    } catch (err) {}
   }
 
-  const template = source
+  return `<pre class="highlight highlight-source-${lang}" data-lang="${lang}"><code>${html}</code></pre>`
+}
 
-  console.log(template)
+function renderMarkdown (text, options, notWrapper) {
+  const md = new MarkdownIt({
+    highlight,
+    ...options
+  })
 
-  return `<template><div class="v-demo">${template}</div></template>
+  return notWrapper ? md.render(text) : `<div class="markdown-body">${md.render(text)}</div>`
+}
+
+function getDependencies (code, options) {
+  const imports = code.replace(/<!--.*?-->/, '') // 去掉注释
+    .match(/\[demo:file\]\(.+?\)/ig) // [Demo:file](../demos/xxx.vue "title")
+
+  if (!imports) return []
+
+  return imports.map(e => {
+    const data = e.match(/\((.+)\)/) // ../demos/xxx.vue "title"
+    const [url, title] = data[1].split(/ +"/) // 空格分隔
+    const [filename, params] = url.split('?')
+    const filepath = path.resolve(this.context, filename)
+
+    const raw = this.fs
+      .readFileSync(filepath, 'utf8')
+      .toString()
+      .trim()
+
+    return {
+      identity: e,
+      raw: raw,
+      filename: filename,
+      filepath: filepath,
+      params: querystring.parse(params),
+      title: title.replace(/"/, '')
+    }
+  })
+}
+
+function fileAnalysis (source, options) {
+  const dependencies = getDependencies.apply(this, [source, options])
+  const imports = []
+  const components = []
+  const newDependencies = []
+
+  for (let i = 0; i < dependencies.length; i++) {
+    const item = dependencies[i]
+    const componentName = `${options.demoNamePerfix}${md5(item.identity).slice(0, 11)}`
+    item.placeholder = `$${componentName}$`
+
+    // demo占位
+    source = source.replace(item.identity, item.placeholder)
+
+    // 避免同组件重复
+    if (components.indexOf(componentName) !== -1) {
+      continue
+    }
+
+    components.push(componentName)
+    imports.push(`import ${componentName} from '${item.filename}'`)
+
+    const codeHtml = renderMarkdown(`\n\`\`\`html\n${item.raw}\n\`\`\`\n`, { ...options.markdown.options, html: true }, true)
+
+    let componentHtml = ''
+    if (options.wrapperName) {
+      const props = JSON.stringify({
+        raw: item.raw,
+        filename: item.filename,
+        title: item.title
+      })
+
+      const demoProps = JSON.stringify(item.params)
+
+      componentHtml = `<${options.wrapperName} :data="${escapeHtml(props)}">
+        <template v-slot:code>
+          <div v-html="\`${escapeHtml(codeHtml)}\`"></div>
+        </template>
+        <${componentName} ${demoProps !== '{}' ? `v-bind="${escapeHtml(demoProps)}"` : ''}/>
+        </${options.wrapperName}>`
+    } else {
+      componentHtml = `<${componentName} />`
+    }
+
+    item.componentName = componentName
+    item.demoBlockHtml = componentHtml
+
+    newDependencies.push(item)
+  }
+
+  return {
+    imports,
+    components,
+    source,
+    dependencies: newDependencies
+  }
+}
+
+export default function loader (source) {
+  const options = {
+    demoNamePerfix: 'VueDemo', // demo组件名前缀
+    wrapperName: 'DemoBlock', // 定义 demo 包裹组件（请全局注册好组件），如果空则仅渲染 demo
+    markdown: {
+      options: {
+        html: false
+      },
+      notWrapper: false
+    },
+    ...getOptions(this)
+  }
+
+  const callback = this.async()
+  const fileResult = fileAnalysis.apply(this, [source, options])
+  const imports = fileResult.imports
+  const components = fileResult.components
+  source = fileResult.source
+
+  source = renderMarkdown(source, options.markdown.options, options.markdown.notWrapper)
+
+  for (let i = 0; i < fileResult.dependencies.length; i++) {
+    const item = fileResult.dependencies[i]
+
+    this.addDependency(item.filepath) // 添加到依赖
+
+    // 替换demo占位为组件代码
+    source = source.replace(new RegExp(item.placeholder.replace(/\$/g, '\\$'), 'g'), item.demoBlockHtml)
+  }
+
+  const component = `<template>\n<div class="v-docs">\n${source}\n</div>\n</template>
     <script>
       /* eslint-disable */
-      ${imports.join('\n')}
+      ${imports.join('\n')}\n
       export default {
         components: { ${components.join(', ')} }
       }
     </script>\n\n`
+
+  callback(null, component)
+
+  return undefined
 }
