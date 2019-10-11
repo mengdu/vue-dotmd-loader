@@ -28,6 +28,7 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "github-markdown-css": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.5.0",
     "rollup": "^1.23.1",
@@ -53,5 +54,9 @@
   "jest": {
     "testRegex": "test/.*.jsx?$"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "highlight.js": "^9.15.10",
+    "markdown-it": "^10.0.0"
+  }
 }
