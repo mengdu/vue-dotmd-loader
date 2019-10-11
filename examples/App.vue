@@ -3,7 +3,7 @@
     <!-- <test /> -->
     <!-- <docs />
     <test /> -->
-    <button-demo />
+    <button-demo v-bind="params" />
     <docs />
   </div>
 </template>
@@ -21,7 +21,9 @@ export default {
     ButtonDemo
   },
   data () {
-    return {}
+    return {
+      params: {title: 'Hi'}
+    }
   }
 }
 </script>

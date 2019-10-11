@@ -1,10 +1,13 @@
 <template>
-  <button class="button"><slot></slot></button>
+  <button class="button" :class="[type && 'button-' + type]" @click="$emit('click')"><slot></slot></button>
 </template>
 
 <script>
 export default {
-  name: 'MButton'
+  name: 'MButton',
+  props: {
+    type: String
+  }
 }
 </script>
 
@@ -21,5 +24,9 @@ export default {
 
   .button:hover {
     background-image: linear-gradient(0deg, #131517 0, #353c44);
+  }
+
+  .button.button-info {
+    background-image: linear-gradient(0deg, #059de2 0, #00b0ff);
   }
 </style>
