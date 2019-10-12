@@ -32,15 +32,24 @@ export default {
 
 ## 文档里编写vue
 
+
+<m-button v-on:click="say">Click</m-button>
+<button v-on:click="say">Click</button>
 <input v-model="msg" placeholder="输入..." class="input" />
 
 > {{msg}}
 
 <script data-demo="vue">
+// data-demo="vue" 的脚本会被解析成vue组件
 export default {
   data () {
     return {
       msg: 'Hi'
+    }
+  },
+  methods: {
+    say () {
+      alert(this.msg)
     }
   },
   created () {
@@ -50,6 +59,7 @@ export default {
 </script>
 
 <style data-demo="vue">
+  /* data-demo="vue" 的样式会被解析到当前vue组件 */
   .input {
     border-radius: 3px;
     border: solid 1px #d5dee6;
