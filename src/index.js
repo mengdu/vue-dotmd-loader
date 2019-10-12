@@ -46,7 +46,7 @@ function renderMarkdown (text, options, notWrapper) {
 }
 
 function getDependencies (code, options) {
-  const imports = code.replace(/<!--.*?-->/, '') // 去掉注释
+  const imports = code.replace(/<!--.*?-->/g, '') // 去掉注释
     .match(new RegExp(`\\[${options.fileDemoTag}\\]\\(.+?\\)`, 'ig')) // [Demo:file](../demos/xxx.vue "title")
 
   if (!imports) return []
