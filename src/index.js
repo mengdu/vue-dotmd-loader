@@ -159,8 +159,8 @@ export default function loader (source) {
     },
     ...getOptions(this)
   }
-  const demoScriptReg = /<script +data-demo="vue".*>((\s|.)*?)<\/script>/
-  const demoStyleReg = /<style +data-demo="vue".*>((\s|.)*?)<\/style>/
+  const demoScriptReg = /<script +data-demo="vue".*>([\s\S]+)<\/script>/
+  const demoStyleReg = /<style +data-demo="vue".*>([\s\S]+)<\/style>/
   const callback = this.async()
   const fileResult = fileAnalysis.apply(this, [source, options])
   const imports = fileResult.imports
