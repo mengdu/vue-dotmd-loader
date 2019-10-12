@@ -54,7 +54,7 @@ function getDependencies (code, options) {
   return imports.map(e => {
     const data = e.match(/\((.+)\)/) // ../demos/xxx.vue "title"
     const [url, title] = data[1].split(/ +"/) // 空格分隔
-    const [filename, params] = url.split('?')
+    const [filename, query] = url.split('?')
     const filepath = path.resolve(this.context, filename)
 
     const raw = this.fs
@@ -62,12 +62,22 @@ function getDependencies (code, options) {
       .toString()
       .trim()
 
+    let params = null
+    if (query) {
+      try {
+        params = JSON.parse(query)
+      } catch (err) {
+        params = querystring.parse(query)
+      }
+    }
+
     return {
       identity: e,
       raw: raw,
       filename: filename,
       filepath: filepath,
-      params: querystring.parse(params),
+      params: params, // 传递到 demo-block 组件的参数
+      query: query,
       title: title.replace(/"/, '')
     }
   })
@@ -105,13 +115,13 @@ function fileAnalysis (source, options) {
         title: item.title
       })
 
-      const demoProps = JSON.stringify(item.params)
+      const demoProps = item.params ? JSON.stringify(item.params) : null
 
-      componentHtml = `<${options.wrapperName} :data="${escapeHtml(props)}">
+      componentHtml = `<${options.wrapperName} :data="${escapeHtml(props)}" :params="${escapeHtml(demoProps)}">
         <template v-slot:code>
           <div v-html="\`${escapeHtml(codeHtml)}\`"></div>
         </template>
-        <${componentName} ${demoProps !== '{}' ? `v-bind="${escapeHtml(demoProps)}"` : ''}/>
+        <${componentName} />
         </${options.wrapperName}>`
     } else {
       componentHtml = `<${componentName} />`
