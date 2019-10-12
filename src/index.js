@@ -4,6 +4,8 @@ import path from 'path'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import querystring from 'querystring'
+// import highlightLinesPlugin from 'markdown-it-highlight-lines'
+import highlightLinesPlugin from './highlightLines'
 
 function md5 (str) {
   const hash = crypto.createHash('md5')
@@ -33,7 +35,7 @@ function highlight (code, lang) {
     } catch (err) {}
   }
 
-  return `<pre class="language language-source-${lang}" data-lang="${lang}"><code>${html}</code></pre>`
+  return `<pre class="language language-${lang}" data-lang="${lang}"><code>${html}</code></pre>`
 }
 
 function renderMarkdown (text, options, notWrapper) {
@@ -41,6 +43,8 @@ function renderMarkdown (text, options, notWrapper) {
     highlight,
     ...options
   })
+
+  md.use(highlightLinesPlugin)
 
   return notWrapper ? md.render(text) : `<div class="markdown-body">${md.render(text)}</div>`
 }
@@ -105,7 +109,8 @@ function fileAnalysis (source, options) {
     components.push(componentName)
     imports.push(`import ${componentName} from '${item.filename}'`)
 
-    const codeHtml = renderMarkdown(`\n\`\`\`html\n${item.raw}\n\`\`\`\n`, { ...options.markdown.options, html: true }, true)
+    const lines = (item.params && item.params.lines) ? item.params.lines : ''
+    const codeHtml = renderMarkdown(`\n\`\`\`html${lines ? ` {${lines}}` : ''}\n${item.raw}\n\`\`\`\n`, { ...options.markdown.options, html: true }, true)
 
     let componentHtml = ''
     if (options.wrapperName) {
