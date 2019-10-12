@@ -47,7 +47,7 @@ function renderMarkdown (text, options, notWrapper) {
 
 function getDependencies (code, options) {
   const imports = code.replace(/<!--.*?-->/, '') // 去掉注释
-    .match(/\[demo:file\]\(.+?\)/ig) // [Demo:file](../demos/xxx.vue "title")
+    .match(new RegExp(`\\[${options.fileDemoTag}\\]\\(.+?\\)`, 'ig')) // [Demo:file](../demos/xxx.vue "title")
 
   if (!imports) return []
 
@@ -135,6 +135,7 @@ export default function loader (source) {
   const options = {
     demoNamePerfix: 'VueDemo', // demo组件名前缀
     wrapperName: 'DemoBlock', // 定义 demo 包裹组件（请全局注册好组件），如果空则仅渲染 demo
+    fileDemoTag: 'demo:vue',
     markdown: {
       options: {
         html: false
