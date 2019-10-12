@@ -155,6 +155,7 @@ export default function loader (source) {
     ...getOptions(this)
   }
   const demoScriptReg = /<script +data-demo="vue".*>((\s|.)*?)<\/script>/
+  const demoStyleReg = /<style +data-demo="vue".*>((\s|.)*?)<\/style>/
   const callback = this.async()
   const fileResult = fileAnalysis.apply(this, [source, options])
   const imports = fileResult.imports
@@ -162,6 +163,7 @@ export default function loader (source) {
   source = fileResult.source
 
   const demoScriptResult = source.match(demoScriptReg)
+  const demoStyleHtml = source.match(demoStyleReg)
   let demoScript = ''
   const demoMixinName = 'DemoScript' + Math.random().toString().substring(2, 10)
 
@@ -169,6 +171,10 @@ export default function loader (source) {
   if (demoScriptResult && demoScriptResult[1]) {
     source = source.replace(demoScriptReg, '') // 去掉demo脚本
     demoScript = demoScriptResult[1].replace(/export default/, `const ${demoMixinName} =`) // 转成mixin变量
+  }
+
+  if (demoStyleHtml && demoStyleHtml[0]) {
+    source = source.replace(demoStyleReg, '') // 去掉demo样式
   }
 
   source = renderMarkdown(source, options.markdown.options, options.markdown.notWrapper)
@@ -191,7 +197,8 @@ export default function loader (source) {
         components: { ${components.join(', ')} },
         mixins: [ ${demoScript ? demoMixinName : ''} ]
       }
-    </script>\n\n`
+    </script>
+    ${(demoStyleHtml && demoStyleHtml[0]) ? demoStyleHtml[0] : ''}`
 
   callback(null, component)
 
