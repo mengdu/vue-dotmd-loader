@@ -11,12 +11,14 @@ npm install -D vue-dotmd-loader
 
 ## Demo
 
-[Demo:file](../examples/demos/button-demo.vue   "Button 简单例子")
+[Demo:vue](../examples/demos/button-demo.vue "Button 简单例子")
 
-[demo:file](../examples/demos/button-demo.vue?type=info   "Button 简单例子")
+<!-- [demo:vue](../examples/demos/button-demo.vue?type=info "查询字符串参数") -->
+
+<!-- [demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20"} "传json参数") -->
 
 
-```html
+```html {1,3,5-8}
 <script>
   import MButton from '../components/button'
 

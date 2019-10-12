@@ -2,8 +2,9 @@ import Vue from 'vue'
 import App from './App'
 import DemoBlock from './components/demo-block'
 import 'github-markdown-css/github-markdown.css'
-import 'highlight.js/styles/default.css'
-import 'highlight.js/styles/github.css'
+import 'highlight.js/styles/color-brewer.css'
+// import 'highlight.js/styles/github.css'
+import './main.css'
 
 Vue.component('DemoBlock', DemoBlock)
 

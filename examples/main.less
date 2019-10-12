@@ -1,0 +1,30 @@
+.code-block {
+  position: relative;
+  border-radius: 6px;
+
+  .highlight-lines {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    line-height: 1.45;
+    z-index: 2;
+    font-size: 85%;
+    box-sizing: border-box;
+    padding: 16px 0 16px 0;
+
+    .highlighted {
+      background-color: rgba(45, 87, 123, 0.16);
+    }
+  }
+
+  .language {
+    position: relative;
+    z-index: 1;
+  }
+}
