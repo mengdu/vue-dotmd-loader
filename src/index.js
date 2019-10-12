@@ -33,7 +33,7 @@ function highlight (code, lang) {
     } catch (err) {}
   }
 
-  return `<pre class="highlight highlight-source-${lang}" data-lang="${lang}"><code>${html}</code></pre>`
+  return `<pre class="language language-source-${lang}" data-lang="${lang}"><code>${html}</code></pre>`
 }
 
 function renderMarkdown (text, options, notWrapper) {
