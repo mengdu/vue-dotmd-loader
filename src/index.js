@@ -17,12 +17,15 @@ const HTML_REPLACEMENTS = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
-  '"': '&quot;'
+  '"': '&quot;',
+  '\'': '&rsqb;'
+  // '{': '&lcub;',
+  // '}': '&rcub;'
 }
 
 function escapeHtml (str) {
-  if (/[&<>"]/.test(str)) {
-    return str.replace(/[&<>"]/g, (ch) => HTML_REPLACEMENTS[ch])
+  if (/[&<>"']/.test(str)) {
+    return str.replace(/[&<>"']/g, (ch) => HTML_REPLACEMENTS[ch])
   }
   return str
 }
@@ -35,7 +38,7 @@ function highlight (code, lang) {
     } catch (err) {}
   }
 
-  return `<pre class="language language-${lang}" data-lang="${lang}"><code>${html}</code></pre>`
+  return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="\`${escapeHtml(html)}\`"></code></pre>`
 }
 
 function renderMarkdown (text, options, notWrapper) {
@@ -124,7 +127,7 @@ function fileAnalysis (source, options) {
 
       componentHtml = `<${options.wrapperName} :data="${escapeHtml(props)}" :params="${escapeHtml(demoProps)}">
         <template v-slot:code>
-          <div v-html="\`${escapeHtml(codeHtml)}\`"></div>
+        ${codeHtml}
         </template>
         <${componentName} />
         </${options.wrapperName}>`
