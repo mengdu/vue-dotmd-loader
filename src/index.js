@@ -4,6 +4,7 @@ import path from 'path'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import querystring from 'querystring'
+import taskListPlugin from 'markdown-it-task-lists'
 // import highlightLinesPlugin from 'markdown-it-highlight-lines'
 import highlightLinesPlugin from './highlightLines'
 
@@ -18,7 +19,7 @@ const HTML_REPLACEMENTS = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  '\'': '&rsqb;'
+  '\'': '&apos;'
   // '{': '&lcub;',
   // '}': '&rcub;'
 }
@@ -48,6 +49,12 @@ function renderMarkdown (text, options, notWrapper) {
   })
 
   md.use(highlightLinesPlugin)
+  md.use(taskListPlugin)
+
+  // 用于注册插件
+  if (typeof options.init === 'function') {
+    options.init(md)
+  }
 
   return notWrapper ? md.render(text) : `<div class="markdown-body">${md.render(text)}</div>`
 }
