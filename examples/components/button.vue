@@ -20,6 +20,11 @@ export default {
     color: #fff;
     border-radius: 3px;
     cursor: pointer;
+    display: inline-block;
+  }
+
+  a.button {
+    text-decoration: none;
   }
 
   .button:hover {
@@ -28,5 +33,13 @@ export default {
 
   .button.button-info {
     background-image: linear-gradient(0deg, #059de2 0, #00b0ff);
+  }
+  .button.button-white {
+    background-image: linear-gradient(0deg, #d0d6dc 0, #e7ebef);
+    color: #2c353c;
+  }
+
+  .button.button-round {
+    border-radius: 100px;
   }
 </style>

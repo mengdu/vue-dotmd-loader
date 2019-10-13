@@ -1,3 +1,76 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+.container {
+  margin: 0 auto;
+  color: #24292D;
+  padding: 0 15px;
+}
+.container .header {
+  padding: 50px 0;
+  text-align: center;
+  background-image: linear-gradient(0deg, #ffffff 0, #e6e6e6);
+  margin-bottom: 30px;
+}
+.container .header .title {
+  font-size: 3rem;
+  font-weight: 200;
+  padding: 0 200px;
+}
+.container .header .des {
+  font-size: 15px;
+  color: #2f373e;
+  padding: 0 200px;
+}
+.container .header .links {
+  padding: 15px 0;
+}
+.container .header .links a + a {
+  margin-left: 15px;
+}
+.container .footer {
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
+.container .footer .line {
+  height: 1px;
+  background-color: #f6f8fa;
+  margin-bottom: 15px;
+}
+.container .footer .links {
+  margin: 30px 0;
+  padding: 0;
+  font-size: 13px;
+  list-style: none;
+  color: #586069;
+  font-weight: 400;
+  line-height: 30px;
+}
+.container .footer .links li {
+  display: inline-block;
+}
+.container .footer .links li + li {
+  margin-left: 15px;
+}
+.container .footer .links a {
+  text-decoration: none;
+  color: #0066D6;
+}
+@media (min-width: 760px) {
+  .container {
+    width: 870px;
+  }
+}
+@media (max-width: 760px) {
+  .container .header {
+    margin: 0 -15px 30px -15px;
+  }
+  .container .header .title,
+  .container .header .des {
+    padding: 0 15px;
+  }
+}
 .code-block {
   position: relative;
   border-radius: 6px;
@@ -24,4 +97,24 @@
 .code-block .language {
   position: relative;
   z-index: 1;
+}
+pre.language {
+  position: relative;
+}
+pre.language::after {
+  content: attr(data-lang);
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 12px;
+  color: inherit;
+  opacity: 0.5;
+}
+.markdown-body code {
+  background-color: #f6f8fa;
+  color: #756bb1;
+  white-space: nowrap;
+}
+.markdown-body pre code {
+  color: inherit;
 }
