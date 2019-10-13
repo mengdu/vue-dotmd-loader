@@ -220,14 +220,14 @@ export default function loader (source) {
     ...getOptions(this)
   }
 
+  // 所有code占位
+  const replaceResult = replaceCodes(source)
+  source = replaceResult.source
+
   const fileResult = fileAnalysis.apply(this, [source, options])
   const imports = fileResult.imports
   const components = fileResult.components
   source = fileResult.source
-
-  // 所有code占位
-  const replaceResult = replaceCodes(source)
-  source = replaceResult.source
 
   const demoScriptResult = getDemoScript(source)
   const demoMixinName = demoScriptResult.demoMixinName
