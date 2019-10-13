@@ -146,7 +146,64 @@ function fileAnalysis (source, options) {
   }
 }
 
+function replaceCodes (source) {
+  const codeDict = {}
+  source = source.replace(/```[\s\S]+?```/g, (e) => {
+    const identity = md5(e)
+    const placeholder = `<!--${identity}-->`
+    codeDict[placeholder] = e
+    return placeholder
+  })
+
+  return {
+    source,
+    codeDict
+  }
+}
+
+function revertCodes (source, dict) {
+  for (const key in dict) {
+    source = source.replace(key, dict[key])
+  }
+
+  return source
+}
+
+function getDemoScript (source) {
+  const demoScriptReg = /<script +data-demo="vue".*>([\s\S]+?)<\/script>/
+  const matchResult = source.match(demoScriptReg)
+  let demoScript = ''
+  const demoMixinName = 'DemoScript' + Math.random().toString().substring(2, 10)
+
+  // 如果存在脚本则提取脚本
+  if (matchResult && matchResult[1]) {
+    source = source.replace(demoScriptReg, '') // 去掉demo脚本
+    demoScript = matchResult[1].replace(/export default/, `const ${demoMixinName} =`) // 转成mixin变量
+  }
+
+  return {
+    demoScript,
+    demoMixinName,
+    source
+  }
+}
+
+function getDemoStyle (source) {
+  const demoStyleReg = /<style +data-demo="vue".*>([\s\S]+?)<\/style>/
+  const matchResult = source.match(demoStyleReg)
+
+  if (matchResult && matchResult[0]) {
+    source = source.replace(demoStyleReg, '') // 去掉demo样式
+  }
+
+  return {
+    demoStyle: matchResult[0] || '',
+    source
+  }
+}
+
 export default function loader (source) {
+  const callback = this.async() // loader 异步返回
   const options = {
     demoNamePerfix: 'VueDemo', // demo组件名前缀
     wrapperName: 'DemoBlock', // 定义 demo 包裹组件（请全局注册好组件），如果空则仅渲染 demo
@@ -159,29 +216,25 @@ export default function loader (source) {
     },
     ...getOptions(this)
   }
-  const demoScriptReg = /<script +data-demo="vue".*>([\s\S]+)<\/script>/
-  const demoStyleReg = /<style +data-demo="vue".*>([\s\S]+)<\/style>/
-  const callback = this.async()
+
   const fileResult = fileAnalysis.apply(this, [source, options])
   const imports = fileResult.imports
   const components = fileResult.components
   source = fileResult.source
 
-  const demoScriptResult = source.match(demoScriptReg)
-  const demoStyleHtml = source.match(demoStyleReg)
-  let demoScript = ''
-  const demoMixinName = 'DemoScript' + Math.random().toString().substring(2, 10)
+  // 所有code占位
+  const replaceResult = replaceCodes(source)
+  source = replaceResult.source
 
-  // 如果存在脚本则提取脚本
-  if (demoScriptResult && demoScriptResult[1]) {
-    source = source.replace(demoScriptReg, '') // 去掉demo脚本
-    demoScript = demoScriptResult[1].replace(/export default/, `const ${demoMixinName} =`) // 转成mixin变量
-  }
+  const demoScriptResult = getDemoScript(source)
+  const demoMixinName = demoScriptResult.demoMixinName
+  source = demoScriptResult.source
 
-  if (demoStyleHtml && demoStyleHtml[0]) {
-    source = source.replace(demoStyleReg, '') // 去掉demo样式
-  }
+  const demoStyleResult = getDemoStyle(source)
+  source = demoStyleResult.source
 
+  // 恢复code
+  source = revertCodes(source, replaceResult.codeDict)
   source = renderMarkdown(source, options.markdown.options, options.markdown.notWrapper)
 
   for (let i = 0; i < fileResult.dependencies.length; i++) {
@@ -197,13 +250,12 @@ export default function loader (source) {
     <script>
       /* eslint-disable */
       ${imports.join('\n')}\n
-      ${demoScript}
+      ${demoScriptResult.demoScript}
       export default {
         components: { ${components.join(', ')} },
-        mixins: [ ${demoScript ? demoMixinName : ''} ]
+        mixins: [ ${demoScriptResult.demoScript ? demoMixinName : ''} ]
       }
-    </script>
-    ${(demoStyleHtml && demoStyleHtml[0]) ? demoStyleHtml[0] : ''}`
+    </script>\n${demoStyleResult.demoStyle}`
 
   callback(null, component)
 
