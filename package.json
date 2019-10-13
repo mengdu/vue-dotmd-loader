@@ -2,7 +2,7 @@
   "name": "vue-dotmd-loader",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "rollup -c --environment NODE_ENV:production",
     "dev": "rollup -c -w --environment NODE_ENV:development",
@@ -57,6 +57,7 @@
   "license": "MIT",
   "dependencies": {
     "highlight.js": "^9.15.10",
-    "markdown-it": "^10.0.0"
+    "markdown-it": "^10.0.0",
+    "markdown-it-task-lists": "^2.1.1"
   }
 }
