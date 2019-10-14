@@ -316,6 +316,7 @@ export default function loader (source) {
     blockDemoNamePerfix: 'BlockCodeDemo',
     fileDemoTag: 'demo:vue',
     blockDemoTag: 'demo:vue',
+    dest: false, // 输出结果文件 bool 或者 function
     markdown: {
       options: {
         html: false
@@ -401,7 +402,12 @@ export default function loader (source) {
     ${style}`.trim()
 
   // console.log(component)
-  // writeFileSync('./result.md', component)
+  if (options.dest) {
+    const filename = typeof options.dest === 'function'
+      ? options.dest(component, this.context, this.resourcePath)
+      : path.basename(this.resourcePath).split('.')[0] + '-md.vue'
+    writeFileSync(path.resolve(this.context, filename), component, 'utf8')
+  }
   callback(null, component)
 
   return undefined
