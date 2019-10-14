@@ -13,7 +13,10 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['.vue', '.js', '.json']
+    extensions: ['.vue', '.js', '.json'],
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js'
+    }
   },
   module: {
     rules: [

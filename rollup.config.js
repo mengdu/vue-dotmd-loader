@@ -21,8 +21,8 @@ module.exports = {
     { file: 'lib/index.js', format: 'cjs' }
   ],
   external: ['loader-utils', 'crypto', 'fs', 'path', 'querystring',
-  'markdown-it', 'highlight.js', 'markdown-it-task-lists'
-],
+    'markdown-it', 'highlight.js', 'markdown-it-task-lists', 'fs'
+  ],
   plugins: [
     Eslint.eslint({
       exclude: ['node_modules/**']
