@@ -203,7 +203,10 @@ function replaceCodes (source) {
 
 function revertCodes (source, dict) {
   for (const key in dict) {
-    source = source.replace(key, dict[key])
+    // 使用回调函数是为了防止子模式引用，防止dict[key]里存在$\' 这种字符串，会替换错误
+    source = source.replace(key, () => {
+      return dict[key]
+    })
   }
 
   return source
@@ -342,14 +345,14 @@ export default function loader (source) {
     this.addDependency(item.filepath) // 添加到依赖
 
     // 替换demo占位为组件代码
-    source = source.replace(new RegExp(item.placeholder.replace(/\$/g, '\\$'), 'g'), item.demoBlockHtml)
+    source = source.replace(new RegExp(item.placeholder.replace(/\$/g, '\\$'), 'g'), () => item.demoBlockHtml)
   }
 
   const blockCodeDemos = []
   for (let i = 0; i < blockDemoResult.blocks.length; i++) {
     const item = blockDemoResult.blocks[i]
     // 替换demo占位为组件代码
-    source = source.replace(new RegExp(item.placeholder.replace(/\$/g, '\\$'), 'g'), item.html)
+    source = source.replace(new RegExp(item.placeholder.replace(/\$/g, '\\$'), 'g'), () => item.html)
     blockCodeDemos.push(`const ${item.componentName} = ${item.js}\n${item.componentName}.template = ${item.template};`)
     components.push(item.componentName)
   }
