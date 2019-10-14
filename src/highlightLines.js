@@ -30,7 +30,8 @@ export default (md) => {
       : token.content
 
     const rawCode = code.replace(wrapperRE, '')
-    const highlightLinesCode = rawCode.split('\n').map((split, index) => {
+    // <code></code> 内容已经转义，故 \\n 为换行符
+    const highlightLinesCode = rawCode.split('\\n').map((split, index) => {
       const lineNumber = index + 1
       const inRange = token.lineNumbers.some(([start, end]) => {
         if (start && end) {

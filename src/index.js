@@ -21,7 +21,8 @@ const HTML_REPLACEMENTS = {
   '>': '&gt;',
   '"': '&quot;',
   '\'': '&apos;',
-  '`': '&grave;'
+  '`': '&grave;',
+  '$': '&dollar;'
   // '{': '&lcub;',
   // '}': '&rcub;'
 }
@@ -41,7 +42,26 @@ function highlight (code, lang) {
     } catch (err) {}
   }
 
-  return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="\`${escapeHtml(html)}\`"></code></pre>`
+  // `` 包裹字符串还是存在一些问题，比如出现 ${}
+  // return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="\`${escapeHtml(html)}\`"></code></pre>`
+
+  const ch = {
+    '\\"': '&quot;',
+    '"': '&quot;',
+    '\\\'': '&apos;',
+    '\'': '&apos;',
+    '$': '&dollar;'
+  }
+  // v-html指令的双引号字符串不能有转义，单引号可以
+  const codeHTML = JSON.stringify(html)
+    .replace(/^"|"$/g, '') // 两边""改成空
+    .replace(/"|'/g, e => {
+      return ch[e]
+    })
+
+  // return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="'${codeHTML}'"></code></pre>`
+
+  return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="'${codeHTML}'"></code></pre>`
 }
 
 function renderMarkdown (text, options, notWrapper) {
