@@ -234,13 +234,15 @@ function getDemoScript (source) {
 function getDemoStyle (source) {
   const demoStyleReg = /<style +data-demo="vue".*>([\s\S]+?)<\/style>/
   const matchResult = source.match(demoStyleReg)
+  let demoStyle = ''
 
   if (matchResult && matchResult[0]) {
     source = source.replace(demoStyleReg, '') // 去掉demo样式
+    demoStyle = matchResult[0]
   }
 
   return {
-    demoStyle: matchResult[0] || '',
+    demoStyle: demoStyle,
     source
   }
 }
