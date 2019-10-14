@@ -1,15 +1,15 @@
 # vue-dotmd-loader
 
-> 将 Markdown 转成 Vue 组件的 webpack loader。
+用于把 `markdown` 文件转成 `Vue` 组件的 `webpack` `laoder` 工具。
 
 **特性**：
 
-+ [x] 支持导入vue文件组件渲染成vue组件实例
++ [x] 支持导入 Vue 文件组件渲染成 Vue 组件实例
 + [x] 代码块支持高亮指定行
-+ [x] md里支持编写vue代码和定义script渲染到当前组件
-+ [x] 支持定义当前组件style样式
-+ [x] md添加totolist支持
-+ [ ] 支持代码块例子
++ [x] md里支持编写 Vue 代码和定义 `script` 渲染到当前组件
++ [x] 支持定义当前组件 style 样式
++ [x] md 添加 totolist 支持
++ [x] 支持代码块渲染组件（需要 Vue 的 `esm` 版本）
 
 ## Usage
 
@@ -42,9 +42,11 @@ npm install -D vue-dotmd-loader
 
 ```js
 {
-  demoNamePerfix: 'VueDemo', // demo组件名前缀
   wrapperName: 'DemoBlock', // 定义 demo 包裹组件（请全局注册好组件），如果空则仅渲染 demo
+  fileDemoNamePerfix: 'FileDemo', // 文件 demo 组件名前缀
+  blockDemoNamePerfix: 'BlockCodeDemo',// 代码块 demo 组件名前缀
   fileDemoTag: 'demo:vue',
+  blockDemoTag: 'demo:vue',
   markdown: { // markdown-it options
     options: {
       html: false
@@ -119,6 +121,46 @@ export default {
 }
 </script>
 ```
+
+## 代码块demo
+
+可以支持在 `md` 文件里编写Vue例子并渲染成实例，不过需要使用vue的 `esm` 版本。
+
+**webpack 配置**：
+
+```js {3}
+{
+  alias: {
+    'vue$': 'vue/dist/vue.esm.js' // esm 版本支持template模板编译
+  }
+}
+```
+
+````html demo:vue
+<template>
+  <m-button :title="`Hi`">Button</m-button>
+</template>
+````
+
+````html demo:vue
+<template>
+  <m-button class="blue" @click="click">Button</m-button>
+</template>
+<script>
+export default {
+  methods: {
+    click () {
+      console.log(this)
+    }
+  }
+}
+</script>
+<style>
+  .blue {
+    color: blue;
+  }
+</style>
+````
 
 ## 直接使用Vue代码
 
