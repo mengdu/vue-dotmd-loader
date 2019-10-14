@@ -232,17 +232,26 @@ function getDemoScript (source) {
 }
 
 function getDemoStyle (source) {
-  const demoStyleReg = /<style +data-demo="vue".*>([\s\S]+?)<\/style>/
+  const demoStyleReg = /<style +data-demo="vue"(.*)>([\s\S]+?)<\/style>/
   const matchResult = source.match(demoStyleReg)
-  let demoStyle = ''
+  let cssText = ''
+  let attrs = ''
 
-  if (matchResult && matchResult[0]) {
+  if (matchResult) {
     source = source.replace(demoStyleReg, '') // 去掉demo样式
-    demoStyle = matchResult[0]
+
+    if (matchResult[1]) {
+      attrs = matchResult[1]
+    }
+
+    if (matchResult[2]) {
+      cssText = matchResult[2]
+    }
   }
 
   return {
-    demoStyle: demoStyle,
+    cssText: cssText,
+    styleTagAttrs: attrs,
     source
   }
 }
@@ -325,6 +334,7 @@ export default function loader (source) {
   const replaceResult = replaceCodes(source)
   source = replaceResult.source
 
+  const cssTexts = []
   const fileResult = fileAnalysis.apply(this, [source, options])
   const imports = fileResult.imports
   const components = fileResult.components
@@ -336,6 +346,10 @@ export default function loader (source) {
 
   const demoStyleResult = getDemoStyle(source)
   source = demoStyleResult.source
+
+  if (demoStyleResult.cssText) {
+    cssTexts.push(demoStyleResult.cssText)
+  }
 
   // 恢复code
   source = revertCodes(source, replaceResult.codeDict)
@@ -357,11 +371,16 @@ export default function loader (source) {
     source = source.replace(new RegExp(item.placeholder.replace(/\$/g, '\\$'), 'g'), () => item.html)
     blockCodeDemos.push(`const ${item.componentName} = ${item.js}\n${item.componentName}.template = ${item.template};`)
     components.push(item.componentName)
+
+    if (item.cssText) {
+      cssTexts.push(item.cssText)
+    }
   }
 
   const mixins = [
     demoScriptResult.demoScript ? demoMixinName : ''
   ].filter(e => !!e)
+  const style = cssTexts.length > 0 ? `<style ${demoStyleResult.styleTagAttrs}>${cssTexts.join('\n')}</style>\n` : ''
 
   const component = `
     <template>\n<div class="v-docs">\n${source}\n</div>\n</template>
@@ -379,7 +398,7 @@ export default function loader (source) {
         ]
       }
     </script>
-    ${demoStyleResult.demoStyle}`.trim()
+    ${style}`.trim()
 
   // console.log(component)
   // writeFileSync('./result.md', component)
