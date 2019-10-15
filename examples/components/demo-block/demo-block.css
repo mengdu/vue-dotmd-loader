@@ -5,7 +5,9 @@
 }
 .m-demo-block .demo {
   padding: 15px;
-  border-bottom: solid 1px #d7e2ea;
+}
+.m-demo-block .code {
+  border-top: solid 1px #d7e2ea;
 }
 .m-demo-block .code pre {
   margin-bottom: 0;

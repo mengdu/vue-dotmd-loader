@@ -1,12 +1,18 @@
 <template>
-  <button class="button" :class="[type && 'button-' + type]" @click="$emit('click')"><slot></slot></button>
+  <button class="button"
+    :class="[
+      type && 'button-' + type,
+      round && 'button-round'
+    ]"
+    @click="$emit('click')"><slot></slot></button>
 </template>
 
 <script>
 export default {
   name: 'MButton',
   props: {
-    type: String
+    type: String,
+    round: Boolean
   }
 }
 </script>
