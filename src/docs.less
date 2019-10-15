@@ -1,0 +1,136 @@
+
+.docs-container {
+  margin: 0 auto;
+  color: #24292D;
+  padding: 0 15px;
+
+  .header {
+    padding: 50px 0;
+    text-align: center;
+    background-image: linear-gradient(0deg, #ffffff 0, #e6e6e6);
+    margin-bottom: 30px;
+
+    .title {
+      font-size: 3rem;
+      font-weight: 200;
+      padding: 0 200px;
+    }
+    .des {
+      font-size: 15px;
+      color: #2f373e;
+      padding: 0 200px;
+    }
+    .links {
+      padding: 15px 0;
+
+      a + a {
+        margin-left: 15px;
+      }
+    }
+  }
+
+  .footer {
+    margin-top: 100px;
+    margin-bottom: 50px;
+
+    .line {
+      height: 1px;
+      background-color: #f6f8fa;
+      margin-bottom: 15px;
+    }
+
+    .links {
+      margin: 30px 0;
+      padding: 0;
+      font-size: 13px;
+      list-style: none;
+      color: #586069;
+      font-weight: 400;
+      line-height: 30px;
+
+      li {
+        display: inline-block;
+
+        & + li {
+          margin-left: 15px;
+        }
+      }
+
+      a {
+        text-decoration: none;
+        color: #0066D6;
+      }
+    }
+  }
+}
+
+@media (min-width: 760px) {
+  .docs-container {
+    width: 870px;
+  }
+}
+
+@media (max-width: 760px) {
+  .docs-container {
+    .header {
+      margin: 0 -15px 30px -15px;
+      .title,
+      .des {
+        padding: 0 15px;
+      }
+    }
+  }
+}
+
+.code-block {
+  position: relative;
+  border-radius: 6px;
+
+  .highlight-lines {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    line-height: 1.45;
+    z-index: 2;
+    font-size: 85%;
+    box-sizing: border-box;
+    padding: 16px 0 16px 0;
+
+    .highlighted {
+      background-color: rgba(45, 87, 123, 0.16);
+    }
+  }
+
+  .language {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+pre.language {
+  position: relative;
+
+  &::after {
+    content: attr(data-lang);
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 12px;
+    color: inherit;
+    opacity: 0.5;
+  }
+}
+.markdown-body code {
+  background-color: rgb(246, 248, 250);
+  color: #756bb1;
+  white-space: nowrap;
+}
+.markdown-body pre code {
+  color: inherit;
+}
