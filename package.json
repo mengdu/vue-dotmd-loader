@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rollup -c --environment NODE_ENV:production",
     "build:docs": "webpack --progress --colors",
+    "build:comp": "webpack --progress --colors --config component.config.js",
     "dev": "rollup -c -w --environment NODE_ENV:development",
     "serve": "webpack-dev-server --progress --colors",
     "serve:docs": "dev serve -d docs -o -p 3000",
