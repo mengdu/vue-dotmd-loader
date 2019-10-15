@@ -14,6 +14,19 @@
     "lintfix": "eslint src --fix",
     "test": "jest"
   },
+  "files": [
+    "lib",
+    "src",
+    "examples/components"
+  ],
+  "homepage": "https://mengdu.github.io/vue-dotmd-loader",
+  "repository": {
+    "type": "https",
+    "url": "git+https://github.com/mengdu/vue-dotmd-loader"
+  },
+  "bugs": {
+    "url": "https://github.com/mengdu/vue-dotmd-loader/issues"
+  },
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-transform-runtime": "^7.4.0",
