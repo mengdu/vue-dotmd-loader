@@ -109,7 +109,7 @@ function getDependencies (code, options) {
       filepath: filepath,
       params: params, // 传递到 demo-block 组件的参数
       query: query,
-      title: title.replace(/"/, '')
+      title: (title || '').replace(/"/, '')
     }
   })
 }
