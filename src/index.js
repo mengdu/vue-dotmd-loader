@@ -379,7 +379,7 @@ export default function loader (source) {
   const style = cssTexts.length > 0 ? `<style ${demoStyleResult.styleTagAttrs}>${cssTexts.join('\n')}</style>\n` : ''
 
   const component = `
-    <template>\n<div class="v-docs">\n${source}\n</div>\n</template>
+    <template>\n<!-- eslint-disable -->\n<div class="v-docs">\n${source}\n</div>\n</template>\n
     <script>
       /** eslint-disable **/
       ${imports.join('\n')}\n
@@ -393,16 +393,18 @@ export default function loader (source) {
           ${mixins.join(',\n')}
         ]
       }
-    </script>
-    ${style}`.trim()
+    </script>\n
+    ${style}`.trim() + '\n'
 
-  // console.log(component)
+  // 写到文件
   if (options.dest) {
     const filename = typeof options.dest === 'function'
       ? options.dest(component, this.context, this.resourcePath)
       : path.basename(this.resourcePath).split('.')[0] + '-md.vue'
+
     writeFileSync(path.resolve(this.context, filename), component, 'utf8')
   }
+
   callback(null, component)
 
   return undefined
