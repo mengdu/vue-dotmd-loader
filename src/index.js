@@ -398,11 +398,12 @@ export default function loader (source) {
 
   // 写到文件
   if (options.dest) {
-    const filename = typeof options.dest === 'function'
-      ? options.dest(component, this.context, this.resourcePath)
-      : path.basename(this.resourcePath).split('.')[0] + '-md.vue'
-
-    writeFileSync(path.resolve(this.context, filename), component, 'utf8')
+    if (typeof options.dest === 'function') {
+      options.dest(component, this.context, this.resourcePath)
+    } else {
+      const filename = path.resolve(this.context, path.basename(this.resourcePath).split('.')[0] + '-md.vue')
+      writeFileSync(filename, component, 'utf8')
+    }
   }
 
   callback(null, component)
