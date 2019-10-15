@@ -29,9 +29,9 @@ npm install -D vue-dotmd-loader
     {
       test: /\.md$/,
       use: [
-        'vue-loader', // 必须的
+        'vue-loader', // vue-dotmd-loader => vue-loader 必须的
         {
-          loader: path.resolve(__dirname, 'lib/index.js'),
+          loader: 'vue-dotmd-loader',
           options: options
         }
       ]
@@ -69,6 +69,42 @@ npm install -D vue-dotmd-loader
 import 'github-markdown-css/github-markdown.css'
 import 'highlight.js/styles/color-brewer.css'
 import 'vue-dotmd-loader/src/docs.css'
+```
+
+## Vue CLI
+
+```js
+{
+  // ...
+  configureWebpack: {
+    resolve: {
+      extensions: ['.md'],
+    }
+  },
+  chainWebpack (config) {
+    // see: https://github.com/neutrinojs/webpack-chain
+    config.module
+      .rule('dotmd')
+      .test(/\.md$/)
+      .use('vue-loader')
+      .loader('vue-loader')
+      .options({
+        ...(config.module.rules.get('vue').uses.get('vue-loader').get('options') || null) // 与 vue-loader 配置保持一致
+      })
+      .end()
+      .use('vue-dotmd-loader')
+      .loader('vue-dotmd-loader')
+      .options({
+        dest: true,
+        markdown: {
+          options: {
+            html: true
+          }
+        }
+      })
+      .end()
+  }
+}
 ```
 
 ### 导入 `.vue` 文件
