@@ -13,10 +13,17 @@ module.exports = {
     publicPath: './'
   },
   resolve: {
+    symlinks: false,
     extensions: ['.vue', '.js', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
     }
+  },
+  resolveLoader: {
+    modules: [
+      'node_modules',
+      path.resolve(process.env.NODE_PATH) // Use for npm link
+    ]
   },
   module: {
     rules: [
@@ -29,7 +36,8 @@ module.exports = {
         use: [
           'vue-loader',
           {
-            loader: path.resolve(__dirname, 'lib/index.js'),
+            // loader: path.resolve(__dirname, 'lib/index.js'),
+            loader: 'vue-dotmd-loader',
             options: {
               dest: true,
               markdown: {
