@@ -1,5 +1,6 @@
 <template>
-  <div class="container">
+  <!-- eslint-disable -->
+  <div class="docs-container">
     <header class="header">
       <h1 class="title">vue-dotmd-loader</h1>
       <p class="des">用于 webpack 支持 import Markdown 文件到 Vue 组件的 loader。</p>

@@ -31,6 +31,7 @@ module.exports = {
           {
             loader: path.resolve(__dirname, 'lib/index.js'),
             options: {
+              dest: true,
               markdown: {
                 options: {
                   html: true

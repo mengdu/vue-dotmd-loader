@@ -6,6 +6,7 @@ import 'github-markdown-css/github-markdown.css'
 import 'highlight.js/styles/color-brewer.css'
 // import 'highlight.js/styles/github.css'
 import './main.css'
+import '../src/docs.css'
 
 Vue.component('DemoBlock', DemoBlock)
 Vue.component('MButton', MButton)
