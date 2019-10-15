@@ -19,19 +19,25 @@ const HTML_REPLACEMENTS = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
-  '"': '&quot;',
-  '\'': '&apos;',
-  '`': '&grave;',
-  '$': '&dollar;'
-  // '{': '&lcub;',
-  // '}': '&rcub;'
+  '"': '&quot;'
 }
 
 function escapeHtml (str) {
-  if (/[&<>"'`]/.test(str)) {
-    return str.replace(/[&<>"'`]/g, (ch) => HTML_REPLACEMENTS[ch])
+  if (/[&<>"]/.test(str)) {
+    return str.replace(/[&<>"]/g, (ch) => HTML_REPLACEMENTS[ch])
   }
   return str
+}
+
+function htmlEntity2String (html) {
+  const ch = {
+    '\'': '\\\'',
+    '"': '\\"'
+  }
+
+  return html.replace(/['"]/g, e => {
+    return ch[e]
+  })
 }
 
 function highlight (code, lang) {
@@ -45,23 +51,12 @@ function highlight (code, lang) {
   // `` 包裹字符串还是存在一些问题，比如出现 ${}
   // return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="\`${escapeHtml(html)}\`"></code></pre>`
 
-  const ch = {
-    '\\"': '&quot;',
-    '"': '&quot;',
-    '\\\'': '&apos;',
-    '\'': '&apos;',
-    '$': '&dollar;'
-  }
-  // v-html指令的双引号字符串不能有转义，单引号可以
-  const codeHTML = JSON.stringify(html)
-    .replace(/^"|"$/g, '') // 两边""改成空
-    .replace(/"|'/g, e => {
-      return ch[e]
-    })
+  html = JSON.stringify(escapeHtml(html)) // 转成html实体后再转换到一行
+    .replace(/^"|"$/g, '') // 去掉json两边双引号
+  html = htmlEntity2String(html) // 转成v-html支持的字符串
 
-  // return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="'${codeHTML}'"></code></pre>`
-
-  return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="'${codeHTML}'"></code></pre>`
+  // v-html="\'test\'"
+  return `<pre class="language language-${lang}" data-lang="${lang}"><code v-html="'${html}'"></code></pre>`
 }
 
 function renderMarkdown (text, options, notWrapper) {
