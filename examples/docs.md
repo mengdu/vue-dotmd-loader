@@ -1,6 +1,8 @@
-# vue-dotmd-loader
+<!-- # vue-dotmd-loader
 
-用于把 `markdown` 文件转成 `Vue` 组件的 `webpack` `laoder` 工具。
+用于把 `markdown` 文件转成 `Vue` 组件的 `webpack` `laoder` 工具。 -->
+
+<!-- [demo:vue](../README.md?{"hideCode":true}) -->
 
 **特性**：
 
@@ -47,7 +49,9 @@ npm install -D vue-dotmd-loader
   blockDemoNamePerfix: 'BlockCodeDemo',// 代码块 demo 组件名前缀
   fileDemoTag: 'demo:vue',
   blockDemoTag: 'demo:vue',
-  markdown: { // markdown-it options
+  dest: false, // 输出结果文件 bool 或者 function
+  dest (code, contextPath, resourcePath) {}, // 自定义写文件
+  markdown: { // markdown-it options see: https://github.com/markdown-it/markdown-it#init-with-presets-and-options
     options: {
       html: false
     },
@@ -59,7 +63,15 @@ npm install -D vue-dotmd-loader
 }
 ```
 
-## 导入Vue例子
+如果你需要与本页面一样的样式，请按照如下引用 css。
+
+```js
+import 'github-markdown-css/github-markdown.css'
+import 'highlight.js/styles/color-brewer.css'
+import 'vue-dotmd-loader/src/docs.css'
+```
+
+### 导入 `.vue` 文件
 
 
 ```md
@@ -67,9 +79,9 @@ npm install -D vue-dotmd-loader
 
 [Demo:vue](../examples/demos/button-demo.vue "Button 简单例子")
 
-[demo:vue](../examples/demos/button-demo.vue?type=info "查询字符串参数")
+[demo:vue](../examples/demos/button-demo.vue?lines=1,3,6,10-13 "查询字符串参数")
 
-[demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20"} "传json参数")
+[demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20","hideCode":true} "传json参数")
 ```
 
 支持通过 `?xxx` 传递参数到 `demo-block` 组件；
@@ -82,11 +94,13 @@ npm install -D vue-dotmd-loader
 
 [Demo:vue](../examples/demos/button-demo.vue "Button 简单例子")
 
-[demo:vue](../examples/demos/button-demo.vue?type=info "查询字符串参数")
+[demo:vue](../examples/demos/button-demo.vue?lines=1,3,6,10-13 "查询字符串参数")
 
-[demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20"} "传json参数")
+[demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20","hideCode":true} "传json参数")
 
-## DemoBlock 组件定义
+> 如果需要定义例子渲染效果，请参考 **DemoBlock 组件定义**
+
+### DemoBlock 组件定义
 
 `DemoBlock` 组件需要注册到全局组件里，默认名称 `DemoBlock` ，可以在配置里更改。
 
@@ -94,7 +108,7 @@ npm install -D vue-dotmd-loader
 <template>
   <div class="m-demo-block">
     <div class="demo"><slot></slot></div>
-    <div class="code"><slot name="code"></slot></div>
+    <div class="code" v-if="!params.hideCode"><slot name="code"></slot></div>
   </div>
 </template>
 
@@ -102,13 +116,34 @@ npm install -D vue-dotmd-loader
 export default {
   props: {
     data: Object,
-    params: Object
+    params: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
   }
 }
 </script>
 ```
 
-## 代码高亮指定行
+### 代码高亮指定行
+
+````md
+```html {1,3,5-8}
+<script>
+  import MButton from '../components/button'
+
+export default {
+  components: {
+    MButton
+  }
+}
+</script>
+```
+````
+
+结果：
 
 ```html {1,3,5-8}
 <script>
@@ -122,7 +157,7 @@ export default {
 </script>
 ```
 
-## 代码块demo
+### 代码块demo
 
 可以支持在 `md` 文件里编写Vue例子并渲染成实例，不过需要使用vue的 `esm` 版本。
 
@@ -162,21 +197,48 @@ export default {
 </style>
 ````
 
-## 直接使用Vue代码
+### 直接使用Vue代码
 
-```html
-<m-button v-on:click="say">Click</m-button>
-<button v-on:click="say">Click</button>
-<input v-model="msg" placeholder="输入..." class="input" />
+如果需要 markdown 中编写 vue 组件或者 html 需要配置 html 支持
 
-{{msg}}
+```js
+{
+  options: {
+    markdown: {
+      options: {
+        html: true // 支持html渲染
+      }
+    }
+  }
+}
 ```
 
-<m-button v-on:click="say">Click</m-button>
+> + 值得注意的是事件暂时不支持 `@event` 绑定，请使用 `v-on:event`
+> + 其中用到的变量和事件需要添加一个 **&lt;script data-demo="vue"&gt;** 的脚本
+
+**例子**：
+
+```html
+<m-button v-on:click="say" type="info" round style="width: 120px;">Click</m-button>
 <button v-on:click="say">Click</button>
 <input v-model="msg" placeholder="输入..." class="input" />
 
 > {{msg}}
+```
+
+**结果**:
+
+<demo-block :params="{hideCode: true}">
+  <m-button v-on:click="say" type="info" round style="width: 120px;">Click</m-button>
+  <button v-on:click="say">Click</button>
+  <input v-model="msg" placeholder="输入..." class="input" />
+  <p></p>
+
+> {{msg}}
+
+</demo-block>
+
+#### 定义当前脚本
 
 `script` 标签带有 `data-demo="vue"` 属性的脚本会被解析到当前组件。
 
@@ -200,6 +262,8 @@ export default {
 }
 </script>
 ```
+
+#### 定义当前样式
 
 `style` 标签带有 `data-demo="vue"` 属性的样式会被解析到当前组件。
 
@@ -240,3 +304,5 @@ export default {
     padding: 5px 10px;
   }
 </style>
+
+-------------
