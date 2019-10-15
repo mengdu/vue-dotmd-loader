@@ -10,7 +10,7 @@ module.exports = {
     path: path.resolve(__dirname, 'docs'),
     filename: 'index.js',
     // libraryTarget: 'umd',
-    publicPath: '/'
+    publicPath: './'
   },
   resolve: {
     extensions: ['.vue', '.js', '.json'],
