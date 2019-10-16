@@ -21,8 +21,7 @@ module.exports = {
   },
   resolveLoader: {
     modules: [
-      'node_modules',
-      path.resolve(process.env.NODE_PATH) // Use for npm link
+      'node_modules'
     ]
   },
   module: {
@@ -36,8 +35,8 @@ module.exports = {
         use: [
           'vue-loader',
           {
-            // loader: path.resolve(__dirname, 'lib/index.js'),
-            loader: 'vue-dotmd-loader',
+            loader: path.resolve(__dirname, 'lib/index.js'),
+            // loader: 'vue-dotmd-loader',
             options: {
               dest: true,
               markdown: {
