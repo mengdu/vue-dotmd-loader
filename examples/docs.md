@@ -73,6 +73,8 @@ import 'vue-dotmd-loader/src/docs.css'
 
 ## Vue CLI
 
+如果你使用 Vue cli 初始化的项目，请按照如下配置。
+
 ```js
 {
   // ...
@@ -107,13 +109,14 @@ import 'vue-dotmd-loader/src/docs.css'
 }
 ```
 
-### 导入 `.vue` 文件
+### 导入文件 Demo
 
+可以从一个文件导入一个Vue组件，并渲染成实例。
 
 ```md
-[demo:vue](<componentPath> [msg]) // 格式是固定的，demo:vue 不区分大小写
+[demo:vue](<componentPath> [msg]) // 格式是固定的，demo:vue 不区分大小写；msg 可选
 
-[Demo:vue](../examples/demos/button-demo.vue "Button 简单例子")
+[demo:vue](../examples/demos/button-demo.vue "Button 简单例子")
 
 [demo:vue](../examples/demos/button-demo.vue?lines=1,3,6,10-13 "查询字符串参数")
 
@@ -193,7 +196,7 @@ export default {
 </script>
 ```
 
-### 代码块demo
+### 代码块 Demo
 
 可以支持在 `md` 文件里编写Vue例子并渲染成实例，不过需要使用vue的 `esm` 版本。
 
