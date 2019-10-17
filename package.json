@@ -1,7 +1,7 @@
 {
   "name": "vue-dotmd-loader",
   "version": "0.1.0",
-  "description": "",
+  "description": "A webpack loader for loader markdown file transform to vue file.",
   "main": "lib/index.js",
   "scripts": {
     "build": "rollup -c --environment NODE_ENV:production",
