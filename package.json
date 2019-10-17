@@ -18,6 +18,7 @@
   "files": [
     "lib",
     "src",
+    "dist",
     "examples/components"
   ],
   "homepage": "https://mengdu.github.io/vue-dotmd-loader",
