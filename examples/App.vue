@@ -3,7 +3,7 @@
   <div class="docs-container">
     <header class="header">
       <h1 class="title">vue-dotmd-loader</h1>
-      <p class="des">用于 webpack 支持 import Markdown 文件到 Vue 组件的 loader。</p>
+      <p class="des">用于把 markdown 文件转成 Vue 组件的 webpack laoder 工具包。</p>
       <div class="links">
         <a href="https://github.com/mengdu/vue-dotmd-loader" class="button button-info button-round" style="width: 120px;">Github</a>
         <a href="https://lanyueos.com" class="button button-white button-round" style="width: 120px;">My Home</a>
@@ -26,14 +26,10 @@
 </template>
 <script>
 import Docs from './docs.md'
-// import Test from '!vue-loader?vue-loader-options!./docs.md'
 import ButtonDemo from './demos/button-demo'
-
-console.log(1, Docs)
 
 export default {
   components: {
-    // Docs, Test,
     Docs,
     ButtonDemo
   },
