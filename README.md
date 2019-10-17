@@ -13,7 +13,7 @@
 + [x] 支持代码块渲染组件（需要 Vue 的 `esm` 版本）
 
 
-[Docs](https://mengdu.github.io/vue-dotmd-loader/docs/index.html)
+[Docs](https://mengdu.github.io/vue-dotmd-loader/index.html)
 
 ## Usage
 
