@@ -109,6 +109,43 @@ import 'vue-dotmd-loader/src/docs.css'
 }
 ```
 
+### DemoBlock 组件定义
+
+每个Demo例子都会渲染到一个vue组里里包裹着，方便扩展功能；只需要定义一个 `DemoBlock` 组件。
+`DemoBlock` 组件需要注册到全局组件里，默认名称 `DemoBlock` ，可以在配置里（`options.wrapperName`）更改。
+
+```html
+<template>
+  <div class="m-demo-block">
+    <div class="demo"><slot></slot></div>
+    <div class="code" v-if="!params.hideCode"><slot name="code"></slot></div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    data: Object,
+    params: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
+  }
+}
+</script>
+```
+
+为了方便，你可以直接使用我打包好的组件。
+
+```js
+import DemoBlock from 'vue-dotmd-loader/dist/index.js' // import DemoBlock
+import 'vue-dotmd-loader/dist/css/default.css' // import css
+
+Vue.use(DemoBlock) // register DemoBlock
+```
+
 ### 导入文件 Demo
 
 可以从一个文件导入一个Vue组件，并渲染成实例。
@@ -138,33 +175,6 @@ import 'vue-dotmd-loader/src/docs.css'
 [demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20","hideCode":true} "传json参数")
 
 > 如果需要定义例子渲染效果，请参考 **DemoBlock 组件定义**
-
-### DemoBlock 组件定义
-
-`DemoBlock` 组件需要注册到全局组件里，默认名称 `DemoBlock` ，可以在配置里更改。
-
-```html
-<template>
-  <div class="m-demo-block">
-    <div class="demo"><slot></slot></div>
-    <div class="code" v-if="!params.hideCode"><slot name="code"></slot></div>
-  </div>
-</template>
-
-<script>
-export default {
-  props: {
-    data: Object,
-    params: {
-      type: Object,
-      default () {
-        return {}
-      }
-    }
-  }
-}
-</script>
-```
 
 ### 代码高亮指定行
 
