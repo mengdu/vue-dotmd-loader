@@ -46,10 +46,10 @@ function highlight (code, lang) {
     try {
       html = hljs.highlight(lang, code).value
     } catch (err) {
-      html = code
+      html = hljs.highlightAuto(code).value
     }
   } else {
-    html = code
+    html = hljs.highlightAuto(code).value
   }
 
   // `` 包裹字符串还是存在一些问题，比如出现 ${}
