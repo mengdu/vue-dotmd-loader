@@ -164,7 +164,10 @@ function fileAnalysis (source, options) {
     imports.push(`import ${componentName} from '${item.filename}'`)
 
     const lines = (item.params && item.params.lines) ? item.params.lines : ''
-    const codeHtml = renderMarkdown(`\n\`\`\`html${lines ? ` {${lines}}` : ''}\n${item.raw}\n\`\`\`\n`, { ...options.markdown.options, html: true }, true)
+    let lang = path.extname(item.filename).replace(/^\./, '')
+    lang = lang === 'vue' ? 'html' : (lang || 'html')
+
+    const codeHtml = renderMarkdown(`\n\`\`\`${lang}${lines ? ` {${lines}}` : ''}\n${item.raw}\n\`\`\`\n`, { ...options.markdown.options, html: true }, true)
 
     let componentHtml = ''
     if (options.wrapperName) {
