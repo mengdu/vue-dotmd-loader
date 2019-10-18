@@ -89,8 +89,19 @@ function getDependencies (code, options) {
   return imports.map(e => {
     const data = e.match(/\((.+)\)/) // ../demos/xxx.vue "title"
     const [url, title] = data[1].split(/ +"/) // 空格分隔
-    const [filename, query] = url.split('?')
+    let [filename, query] = url.split('?')
+    filename = filename.trim()
+      .replace(/^"|"$/g, '')
+      .replace(/^'|'$/g, '')
+      .trim()
+
     const filepath = path.resolve(this.context, filename)
+
+    const stats = this.fs.statSync(filepath)
+
+    if (stats.isDirectory()) {
+      throw new Error(`Could't read the demo file on "${filepath}".\nTo read the source code, must be use the full filename`)
+    }
 
     const raw = this.fs
       .readFileSync(filepath, 'utf8')
