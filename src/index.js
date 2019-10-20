@@ -81,52 +81,63 @@ function renderMarkdown (text, options, notWrapper) {
 }
 
 function getDependencies (code, options) {
-  const imports = code.replace(/<!--.*?-->/g, '') // 去掉注释
-    .match(new RegExp(`\\[${options.fileDemoTag}\\]\\(.+?\\)`, 'ig')) // [Demo:file](../demos/xxx.vue "title")
+  const tags = `(${options.fileDemoTag}|${options.includeCodeTag}|${options.includeRawTag})`
+  const reg = new RegExp(`\\[${tags}\\]\\((.+?)\\)`, 'ig')
 
-  if (!imports) return []
+  const imports = []
+  const that = this
 
-  return imports.map(e => {
-    const data = e.match(/\((.+)\)/) // ../demos/xxx.vue "title"
-    const [url, title] = data[1].split(/ +"/) // 空格分隔
-    let [filename, query] = url.split('?')
-    filename = filename.trim()
-      .replace(/^"|"$/g, '')
-      .replace(/^'|'$/g, '')
-      .trim()
+  code.replace(/<!--.*?-->/g, '') // 去掉注释
+    .replace(reg, function (e, tag, urlText) {
 
-    const filepath = path.resolve(this.context, filename)
+      const res = urlText.match(/(\S+)(\s+"(.*)")?/)
+      const url = res[1].replace(/^"|"$/g, '')
+      const title = (res[3] || '').replace(/^"|"$/g, '')
 
-    const stats = this.fs.statSync(filepath)
+      let [filename, query = {}] = url.split('?')
 
-    if (stats.isDirectory()) {
-      throw new Error(`Could't read the demo file on "${filepath}".\nTo read the source code, must be use the full filename`)
-    }
+      filename = filename.trim()
 
-    const raw = this.fs
-      .readFileSync(filepath, 'utf8')
-      .toString()
-      .trim()
+      const filepath = path.resolve(that.context, filename)
 
-    let params = null
-    if (query) {
-      try {
-        params = JSON.parse(query)
-      } catch (err) {
-        params = querystring.parse(query)
+      const stats = that.fs.statSync(filepath)
+
+      if (stats.isDirectory()) {
+        throw new Error(`Could't read the demo file on "${filepath}".\nTo read the source code, must be use the full filename`)
       }
-    }
 
-    return {
-      identity: e,
-      raw: raw,
-      filename: filename,
-      filepath: filepath,
-      params: params, // 传递到 demo-block 组件的参数
-      query: query,
-      title: (title || '').replace(/"/, '')
-    }
-  })
+      const raw = that.fs
+        .readFileSync(filepath, 'utf8')
+        .toString()
+        .trim()
+
+      let params = null
+      if (query) {
+        try {
+          params = JSON.parse(query)
+        } catch (err) {
+          params = querystring.parse(query)
+        }
+      } else {
+        // params = {}
+      }
+
+      const file = {
+        identity: e,
+        tag: tag.toLowerCase(),
+        raw: raw,
+        filename: filename,
+        filepath: filepath,
+        params: params, // 传递到 demo-block 组件的参数
+        title: title || ''
+      }
+
+      imports.push(file)
+
+      return e
+    })
+
+  return imports
 }
 
 function createDemoHtml (wrapperName, componentName, codeHTML, props) {
@@ -145,12 +156,14 @@ function fileAnalysis (source, options) {
   const dependencies = getDependencies.apply(this, [source, options])
   const imports = []
   const components = []
+
   const newDependencies = []
 
   for (let i = 0; i < dependencies.length; i++) {
     const item = dependencies[i]
     const componentName = `${options.fileDemoNamePerfix}${md5(item.identity).slice(0, 11)}`
     item.placeholder = `$${componentName}$`
+    item.componentName = componentName
 
     // demo占位
     source = source.replace(item.identity, item.placeholder)
@@ -160,32 +173,46 @@ function fileAnalysis (source, options) {
       continue
     }
 
-    components.push(componentName)
-    imports.push(`import ${componentName} from '${item.filename}'`)
-
+    let componentHtml = ''
     const lines = (item.params && item.params.lines) ? item.params.lines : ''
     let lang = path.extname(item.filename).replace(/^\./, '')
-    lang = lang === 'vue' ? 'html' : (lang || 'html')
+    lang = lang === 'vue' ? 'html' : (lang || '')
 
-    const codeHtml = renderMarkdown(`\n\`\`\`${lang}${lines ? ` {${lines}}` : ''}\n${item.raw}\n\`\`\`\n`, { ...options.markdown.options, html: true }, true)
+    if (item.tag === options.fileDemoTag) {
+      components.push(componentName)
+      imports.push(`import ${componentName} from '${item.filename}'`)
 
-    let componentHtml = ''
-    if (options.wrapperName) {
-      const props = {
-        data: {
-          raw: item.raw,
-          filename: item.filename,
-          title: item.title
-        },
-        params: item.params || null
+      if (options.wrapperName) {
+        const code = `\n\`\`\`${lang}${lines ? ` {${lines}}` : ''}\n${item.raw}\n\`\`\`\n`
+        const codeHtml = renderMarkdown(code, options.markdown.options, true)
+
+        const props = {
+          data: {
+            raw: item.raw,
+            filename: item.filename,
+            title: item.title
+          },
+          params: item.params || null
+        }
+
+        componentHtml = createDemoHtml(options.wrapperName, componentName, codeHtml, props)
+      } else {
+        componentHtml = `<${componentName} />`
       }
-
-      componentHtml = createDemoHtml(options.wrapperName, componentName, codeHtml, props)
     } else {
-      componentHtml = `<${componentName} />`
+      if (item.tag === options.includeRawTag) {
+        componentHtml = item.raw
+      } else if (item.tag === options.includeCodeTag) {
+        const raw = item.raw.replace(/````/g, () => '1$$$$$1') // 占位 ````
+
+        // 采用 ```` 包裹可以支持导入md源
+        const code = `\n\`\`\`\`${lang}${lines ? ` {${lines}}` : ''}\n${raw}\n\`\`\`\`\n`
+
+        componentHtml = renderMarkdown(code, options.markdown.options, true)
+          .replace(/1\$\$\$\$\$1/g, '````') // 还原` ```
+      }
     }
 
-    item.componentName = componentName
     item.demoBlockHtml = componentHtml
 
     newDependencies.push(item)
@@ -329,6 +356,8 @@ export default function loader (source) {
     blockDemoNamePerfix: 'BlockCodeDemo',
     fileDemoTag: 'demo:vue',
     blockDemoTag: 'demo:vue',
+    includeCodeTag: 'include:code', // 导入code，渲染成代码
+    includeRawTag: 'include:raw', // 导入html片段
     dest: false, // 输出结果文件 bool 或者 function
     markdown: {
       options: {
@@ -338,6 +367,10 @@ export default function loader (source) {
     },
     ...getOptions(this)
   }
+
+  options.fileDemoTag = options.fileDemoTag.toLowerCase()
+  options.includeCodeTag = options.includeCodeTag.toLowerCase()
+  options.includeRawTag = options.includeRawTag.toLowerCase()
 
   // 获取代码块demo
   const blockDemoResult = getBlocCodekDemo(source, options)
