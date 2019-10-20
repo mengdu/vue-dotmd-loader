@@ -4,6 +4,7 @@
 
 <!-- [demo:vue](../README.md?{"hideCode":true}) -->
 
+
 **特性**：
 
 + [x] 支持导入 Vue 文件组件渲染成 Vue 组件实例
@@ -12,6 +13,8 @@
 + [x] 支持定义当前组件 style 样式
 + [x] md 添加 totolist 支持
 + [x] 支持代码块渲染组件（需要 Vue 的 `esm` 版本）
++ [x] 支持导入文件代码（渲染成代码高亮）
++ [x] 支持导入源码（比如导入html片段，注意：不会经过markdown编译）
 
 ## Usage
 
@@ -49,6 +52,8 @@ npm install -D vue-dotmd-loader
   blockDemoNamePerfix: 'BlockCodeDemo',// 代码块 demo 组件名前缀
   fileDemoTag: 'demo:vue',
   blockDemoTag: 'demo:vue',
+  includeCodeTag: 'include:code', // 导入code，渲染成代码
+  includeRawTag: 'include:raw', // 导入html片段
   dest: false, // 输出结果文件 bool 或者 function
   dest (code, contextPath, resourcePath) {}, // 自定义写文件
   markdown: { // markdown-it options see: https://github.com/markdown-it/markdown-it#init-with-presets-and-options
@@ -155,7 +160,7 @@ Vue.use(DemoBlock) // register DemoBlock
 
 [demo:vue](../examples/demos/button-demo.vue "Button 简单例子")
 
-[demo:vue](../examples/demos/button-demo.vue?lines=1,3,6,10-13 "查询字符串参数")
+[demo:vue](../examples/demos/button-demo.vue?lines=1,3,6,10-13 "标题")
 
 [demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20","hideCode":true} "传json参数")
 ```
@@ -175,6 +180,28 @@ Vue.use(DemoBlock) // register DemoBlock
 [demo:vue](../examples/demos/button-demo.vue?{"text":"Hi","number":1001,"bool":true,"arr":[1,true,"text"],"lines":"1,3,5,7-20","hideCode":true} "传json参数")
 
 > 如果需要定义例子渲染效果，请参考 **DemoBlock 组件定义**
+
+### 导入文件代码
+
+通过 `include:code` 标识导入代码，导入代码会经过 markdown 渲染成代码块。
+
+````md
+// [include:code](.filename?lines=1,3,5-10) // 可以指定高亮行参数
+[include:code](./demos/button-demo.vue)
+````
+结果：
+
+[include:code](./demos/button-demo.vue)
+
+### 导入html片段
+
+通过 `include:raw` 标识导入源
+
+> 值得注意：导入源不会经过 markdown 渲染。
+
+````md
+[include:raw](./layouts/footer.html)
+````
 
 ### 代码高亮指定行
 
