@@ -42,6 +42,7 @@ npm install -D vue-dotmd-loader
   ]
 }
 ```
+
 **options**：
 
 ```js
