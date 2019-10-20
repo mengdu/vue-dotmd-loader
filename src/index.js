@@ -89,7 +89,6 @@ function getDependencies (code, options) {
 
   code.replace(/<!--.*?-->/g, '') // 去掉注释
     .replace(reg, function (e, tag, urlText) {
-
       const res = urlText.match(/(\S+)(\s+"(.*)")?/)
       const url = res[1].replace(/^"|"$/g, '')
       const title = (res[3] || '').replace(/^"|"$/g, '')
