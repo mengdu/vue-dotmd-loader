@@ -1,30 +1,31 @@
 # vue-dotmd-loader
 
-用于把 `markdown` 文件转成 `Vue` 组件的 `webpack` `laoder` 工具包。
+A webpack loader for loader markdown file transform to vue file.
 
 
-**特性**：
+**Features**：
 
-+ [x] 支持导入 Vue 文件组件渲染成 Vue 组件实例
-+ [x] 代码块支持高亮指定行
-+ [x] md里支持编写 Vue 代码和定义 `script` 渲染到当前组件
-+ [x] 支持定义当前组件 style 样式
-+ [x] md 添加 totolist 支持
-+ [x] 支持代码块渲染组件（需要 Vue 的 `esm` 版本）
-+ [x] 支持导入文件代码（渲染成代码高亮）
-+ [x] 支持导入源码（比如导入html片段，注意：不会经过markdown编译）
++ [x] Support to import Vue file components and render them into Vue component instances
++ [x] Code block supports highlighting specified lines
++ [x] Supports writing Vue code and defining `script` to render to the current component
++ [x] Support defining current component style
++ [x] Support todolist
++ [x] Support code block rendering components (requires the `ESM` version of Vue)
++ [x] Support for importing file code (rendering to code highlight)
++ [x] Support to import source code (such as importing HTML fragments, note: it will not be compiled through markdown)
 
-详细用法：[Docs](https://mengdu.github.io/vue-dotmd-loader/index.html)
+
+Detailed usage：[Docs](https://mengdu.github.io/vue-dotmd-loader/index.html)
 
 ## Usage
 
-**安装**
+**install**
 
 ```ls
 npm install -D vue-dotmd-loader
 ```
 
-**webpack配置**
+**webpack.config.js**
 
 ```js
 {
@@ -32,7 +33,7 @@ npm install -D vue-dotmd-loader
     {
       test: /\.md$/,
       use: [
-        'vue-loader', // vue-dotmd-loader => vue-loader 必须的
+        'vue-loader', // must use vue-loader
         {
           loader: 'vue-dotmd-loader',
           options: options
@@ -47,28 +48,28 @@ npm install -D vue-dotmd-loader
 
 ```js
 {
-  wrapperName: 'DemoBlock', // 定义 demo 包裹组件（请全局注册好组件），如果空则仅渲染 demo
-  fileDemoNamePerfix: 'FileDemo', // 文件 demo 组件名前缀
-  blockDemoNamePerfix: 'BlockCodeDemo',// 代码块 demo 组件名前缀
-  fileDemoTag: 'demo:vue',
-  blockDemoTag: 'demo:vue',
-  includeCodeTag: 'include:code', // 导入code，渲染成代码
-  includeRawTag: 'include:raw', // 导入html片段
-  dest: false, // 输出结果文件 bool 或者 function
-  dest (code, contextPath, resourcePath) {}, // 自定义写文件
+  wrapperName: 'DemoBlock', // Define the demo package component (please register the component globally). If it is empty, only the demo will be rendered.
+  fileDemoNamePerfix: 'FileDemo', // Name prefix of the demo component file
+  blockDemoNamePerfix: 'BlockCodeDemo',// Name prefix of Code block demo component
+  fileDemoTag: 'demo:vue', // File demo tag; format: [demo:vue](filePath)
+  blockDemoTag: 'demo:vue', // Block code demo tag; format: ````html demo:vue code ````
+  includeCodeTag: 'include:code', // Include code tag; format: [include:code](filePath)
+  includeRawTag: 'include:raw', // Include raw source tag; format: [include:raw](filePath)
+  dest: false, // ouput file; true/false/function
+  dest (code, contextPath, resourcePath) {}, // Custom write file
   markdown: { // markdown-it options see: https://github.com/markdown-it/markdown-it#init-with-presets-and-options
     options: {
       html: false
     },
     notWrapper: false,
     init (md) {
-      md.use(otherPlugin) // 添加 markdown-it 插件
+      md.use(otherPlugin) // Add markdown-it plug-in
     }
   }
 }
 ```
 
-如果你需要与本页面一样的样式，请按照如下引用 css。
+If you need the same style as this page, please refer to CSS as follows.
 
 ```js
 import 'github-markdown-css/github-markdown.css'
@@ -78,7 +79,7 @@ import 'vue-dotmd-loader/src/docs.css'
 
 ## Vue CLI
 
-如果你使用 Vue cli 初始化的项目，请按照如下配置。
+If you are using a project initialized by Vue cli, configure it as follows.
 
 ```js
 {
@@ -96,7 +97,7 @@ import 'vue-dotmd-loader/src/docs.css'
       .use('vue-loader')
       .loader('vue-loader')
       .options({
-        ...(config.module.rules.get('vue').uses.get('vue-loader').get('options') || null) // 与 vue-loader 配置保持一致
+        ...(config.module.rules.get('vue').uses.get('vue-loader').get('options') || null) // Consistent with Vue loader configuration
       })
       .end()
       .use('vue-dotmd-loader')
