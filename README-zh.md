@@ -2,6 +2,7 @@
 
 用于把 `markdown` 文件转成 `Vue` 组件的 `webpack` `laoder` 工具包。
 
+[English](./README.md)
 
 **特性**：
 
@@ -50,11 +51,11 @@ npm install -D vue-dotmd-loader
   wrapperName: 'DemoBlock', // 定义 demo 包裹组件（请全局注册好组件），如果空则仅渲染 demo
   fileDemoNamePerfix: 'FileDemo', // 文件 demo 组件名前缀
   blockDemoNamePerfix: 'BlockCodeDemo',// 代码块 demo 组件名前缀
-  fileDemoTag: 'demo:vue',
-  blockDemoTag: 'demo:vue',
-  includeCodeTag: 'include:code', // 导入code，渲染成代码
-  includeRawTag: 'include:raw', // 导入html片段
-  dest: false, // 输出结果文件 bool 或者 function
+  fileDemoTag: 'demo:vue', // 文件 demo 标记；格式：[demo:vue](filePath)
+  blockDemoTag: 'demo:vue',// 代码块 demo 标记；格式：````html demo:vue code ````
+  includeCodeTag: 'include:code', // 导入code，渲染成代码；格式：[include:code](filePath)
+  includeRawTag: 'include:raw', // 导入html片段；格式：[include:code](filePath)
+  dest: false, // 输出结果到文件；true/false/function
   dest (code, contextPath, resourcePath) {}, // 自定义写文件
   markdown: { // markdown-it options see: https://github.com/markdown-it/markdown-it#init-with-presets-and-options
     options: {

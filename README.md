@@ -3,6 +3,8 @@
 A webpack loader for loader markdown file transform to vue file.
 
 
+[中文](./README.md)
+
 **Features**：
 
 + [x] Support to import Vue file components and render them into Vue component instances
