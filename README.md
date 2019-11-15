@@ -71,6 +71,16 @@ npm install -D vue-dotmd-loader
 }
 ```
 
+**eslint ignore**
+
+```json
+{
+  "eslintIgnore": [
+    "**/*.md"
+  ]
+}
+```
+
 If you need the same style as this page, please refer to CSS as follows.
 
 ```js

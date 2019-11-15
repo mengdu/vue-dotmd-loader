@@ -68,6 +68,18 @@ npm install -D vue-dotmd-loader
 }
 ```
 
+**eslint ignore**
+
+```json
+{
+  "eslintIgnore": [
+    "**/*.md"
+  ]
+}
+```
+
+**样式**
+
 如果你需要与本页面一样的样式，请按照如下引用 css。
 
 ```js
