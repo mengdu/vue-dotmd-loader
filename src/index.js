@@ -7,7 +7,7 @@ import querystring from 'querystring'
 import taskListPlugin from 'markdown-it-task-lists'
 // import highlightLinesPlugin from 'markdown-it-highlight-lines'
 import highlightLinesPlugin from './highlightLines'
-import { writeFileSync } from 'fs'
+import fs from 'fs'
 
 function md5 (str) {
   const hash = crypto.createHash('md5')
@@ -99,13 +99,13 @@ function getDependencies (code, options) {
 
       const filepath = path.resolve(that.context, filename)
 
-      const stats = that.fs.statSync(filepath)
+      const stats = fs.statSync(filepath)
 
       if (stats.isDirectory()) {
         throw new Error(`Could't read the demo file on "${filepath}".\nTo read the source code, must be use the full filename`)
       }
 
-      const raw = that.fs
+      const raw = fs
         .readFileSync(filepath, 'utf8')
         .toString()
         .trim()
@@ -452,7 +452,7 @@ export default function loader (source) {
       options.dest(component, this.context, this.resourcePath)
     } else {
       const filename = path.resolve(this.context, path.basename(this.resourcePath).split('.')[0] + '-md.vue')
-      writeFileSync(filename, component, 'utf8')
+      fs.writeFileSync(filename, component, 'utf8')
     }
   }
 
