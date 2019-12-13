@@ -3,7 +3,7 @@
 A webpack loader for loader markdown file transform to vue file.
 
 
-[中文](./README.md)
+[中文](./README-zh.md)
 
 **Features**：
 
