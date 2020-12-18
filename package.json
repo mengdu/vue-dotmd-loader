@@ -75,7 +75,7 @@
   "license": "MIT",
   "dependencies": {
     "github-markdown-css": "^3.0.1",
-    "highlight.js": "^9.15.10",
+    "highlight.js": "^10.4.1",
     "markdown-it": "^10.0.0",
     "markdown-it-task-lists": "^2.1.1"
   }
