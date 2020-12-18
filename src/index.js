@@ -60,7 +60,7 @@ function highlight (code, lang) {
   html = htmlEntity2String(html) // 转成v-html支持的字符串
 
   // v-html="\'test\'"
-  return `<pre class="language${lang ? ' language-' + lang : ''}" data-lang="${lang}"><code v-html="'${html}'"></code></pre>`
+  return `<pre class="hljs language${lang ? ' language-' + lang : ''}" data-lang="${lang}"><code v-html="'${html}'"></code></pre>`
 }
 
 function renderMarkdown (text, options, notWrapper) {
