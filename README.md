@@ -2,6 +2,7 @@
 
 A webpack loader for loader markdown file transform to vue file.
 
+> !!! [vite-plugin-markdown-vue](https://github.com/mengdu/vite-plugin-markdown-vue) is recommended for project Vite.
 
 [中文](./README-zh.md)
 
